@@ -158,7 +158,6 @@ int twpm_init_nv(void)
 {
 	bool integrity_verify = false;
 	bool first_run = true;
-#if 0
 
 	flash_nv_integrity = nv_partition_open(FLASH_AREA_ID(nv_integrity),
 					       FLASH_AREA_LABEL_STR(nv_integrity));
@@ -239,7 +238,7 @@ int twpm_init_nv(void)
 			return -1;
 		}
 	}
-#endif
+
 	LOG_INF("NV init done");
 	nv_ok = true;
 	return first_run ? 1 : 0;
@@ -382,7 +381,7 @@ int _plat__NvCommit(void)
 	// levelling.
 
 	// nv_integrity was malloc()ed which ensures proper alignment.
-	#if 0
+
 	nv_integrity_t *integrity = (nv_integrity_t*)nv_integrity;
 	integrity->sig.magic = NVINTEGRITYMAGIC;
 
@@ -412,7 +411,6 @@ int _plat__NvCommit(void)
 		LOG_ERR("NV: commit failed (integrity): %d", ret);
 		return -1;
 	}
-	#endif
 
 	return 0;
 }
