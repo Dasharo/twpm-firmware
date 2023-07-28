@@ -1,0 +1,9 @@
+mainmenu "TwPM firmware configuration"
+
+config TWPM_USE_UNSAFE_RNG
+	bool "Usafe unsafe RNG"
+	help
+	  DANGER! Disables use of cryptographically-secure Randor Number
+	  Generator. This should be used only for testing purposes.
+
+source "Kconfig.zephyr"

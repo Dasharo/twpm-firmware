@@ -17,15 +17,15 @@ LOG_MODULE_REGISTER(rng);
  */
 int32_t _plat__GetEntropy(unsigned char *entropy, uint32_t amount)
 {
-#if 0
+#if !defined(CONFIG_TWPM_USE_UNSAFE_RNG)
 	int ret = sys_csrand_get(entropy, amount);
 	if (ret < 0) {
 		LOG_ERR("RNG failed\n");
 		return -1;
 	}
+#else
+	sys_rand_get(entropy, amount);
+#endif
 
 	return amount;
-#else
-	return 0;
-#endif
 }
