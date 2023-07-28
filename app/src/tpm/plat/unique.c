@@ -35,7 +35,9 @@
 
 #include <twpm/platform.h>
 
+#if defined(CONFIG_HWINFO)
 #include <zephyr/drivers/hwinfo.h>
+#endif
 #include <zephyr/logging/log.h>
 
 #include <wolfssl/wolfcrypt/sha512.h>
@@ -49,6 +51,7 @@ static char tpm_unique[WC_SHA512_DIGEST_SIZE] = {0};
  * 
  */
 void twpm_init_unique() {
+#if defined(CONFIG_TWPM_USE_HWINFO)
 	char id[32];
 	// Nucleo-TPM used more data (like flash size, device model, revision, etc.)
 	// to generate unique. Here we take only device id/serial because of
@@ -65,6 +68,7 @@ void twpm_init_unique() {
 	wc_InitSha512(&hasher);
 	wc_Sha512Update(&hasher, id, size);
 	wc_Sha512Final(&hasher, tpm_unique);
+#endif
 }
 
 /**
