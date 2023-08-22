@@ -1,3 +1,16 @@
+/ {
+	aliases {
+		lpcfpga = &twpm_lpc_fpga;
+	};
+
+	twpm_lpc_fpga: twpm_lpc_fpga@40020000 {
+		compatible = "twpm,lpc_fpga";
+		reg = <0x40020000 0x400>;
+		interrupt-parent = <&nvic>;
+		interrupts = <4 1>;
+	};
+};
+
 &spiflash {
 	partitions {
 		compatible = "fixed-partitions";
