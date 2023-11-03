@@ -1,0 +1,42 @@
+&flash {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		nv_integrity: partition@70800 {
+			label = "nv_integrity";
+			reg = <0x70800 0x800>;
+		};
+
+		// NV size must match with NV_MEMORY_SIZE macro in ms-tpm's
+		// Implementation.h
+		nv_storage: partition@71800 {
+			label = "nv_storage";
+			reg = <0x71800 0x4000>;
+		};
+	};
+};
+
+&dma1 {
+	status = "okay";
+};
+
+&spi1 {
+	status = "disabled";
+};
+
+&spi2 {
+	/*
+	 * See https://docs.zephyrproject.org/3.0.0/reference/devicetree/bindings/dma/st%2Cstm32-dma-v2.html
+	 */
+	dmas = <&dma1 5 1 0x20440>,
+	       <&dma1 4 1 0x20480>;
+	dma-names = "tx", "rx";
+};
+
+&spi3 {
+	status = "disabled";
+};

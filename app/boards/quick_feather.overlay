@@ -1,0 +1,24 @@
+&spiflash {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* Put directly after the application region.
+		 * Based on memory map from
+		 * https://github.com/QuickLogic-Corp/qorc-sdk/blob/d61d064146c0ee927aa12b088b3bbbce60615f4d/docs/source/qorc-setup/qorc-flash-memory-map-addresses.svg
+		 */
+
+		nv_integrity: partition@ee000 {
+			label = "nv_integrity";
+			reg = <0xee000 0x1000>;
+		};
+
+		// NV size must match with NV_MEMORY_SIZE macro in ms-tpm's
+		// Implementation.h
+		nv_storage: partition@ef000 {
+			label = "nv_storage";
+			reg = <0xef000 0x4000>;
+		};
+	};
+};
