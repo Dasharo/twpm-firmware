@@ -353,8 +353,11 @@ void _plat__NvMemoryMove(unsigned int src, unsigned int dst, unsigned int size)
 {
 	if (src + size > flash_nv_storage->fa_size
 	    || dst + size > flash_nv_storage->fa_size) {
-		memmove(&nv_shadow[dst], &nv_shadow[src], size);
+		LOG_ERR("Attempt move data past NV bounds");
+		return;
 	}
+
+	memmove(&nv_shadow[dst], &nv_shadow[src], size);
 }
 
 //***_plat__NvCommit()
