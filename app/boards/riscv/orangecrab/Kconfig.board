@@ -1,0 +1,3 @@
+config BOARD_ORANGECRAB
+	bool "OrangeCrab with NEORV32 CPU"
+	depends on SOC_SERIES_NEORV32

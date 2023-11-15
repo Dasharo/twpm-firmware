@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.20.0)
+
+# Required so that Zephyr finds our custom boards. This does not disable lookup
+# of boards from Zephyr repo.
+set(BOARD_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project(app LANGUAGES C VERSION 0.1.0)

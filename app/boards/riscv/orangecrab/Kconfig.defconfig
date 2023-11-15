@@ -1,0 +1,6 @@
+if BOARD_ORANGECRAB
+
+config BOARD
+	default "orangecrab"
+
+endif

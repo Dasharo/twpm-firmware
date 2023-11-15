@@ -1,0 +1,30 @@
+/dts-v1/;
+
+#include <neorv32_1_9_0.dtsi>
+#include <freq.h>
+#include <mem.h>
+
+/ {
+	chosen {
+		zephyr,sram = &dram;
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-pipe = &uart0;
+	};
+
+	soc {
+		dram: memory@80000000 {
+			compatible = "mmio-sram";
+			reg = <0x80000000 DT_SIZE_M(128)>;
+		};
+	};
+};
+
+&cpu0 {
+	clock-frequency = <DT_FREQ_M(50)>;
+};
+
+&uart0 {
+	current-speed = <115200>;
+	status = "okay";
+};
