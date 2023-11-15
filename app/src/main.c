@@ -54,6 +54,8 @@ static void tpm_thread_entry(void *p0, void *p1, void *p2) {
 	}
 }
 
+void twpm_lpc_init();
+
 void main(void)
 {
 	LOG_INF("Starting TwPM on %s", CONFIG_BOARD);
@@ -65,4 +67,6 @@ void main(void)
 					K_THREAD_STACK_SIZEOF(tpm_thread_stack),
 					tpm_thread_entry, NULL, NULL, NULL, 5, 0,
 					K_NO_WAIT);
+
+	twpm_lpc_init();
 }

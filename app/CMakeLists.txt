@@ -8,6 +8,7 @@ target_sources(app PRIVATE
     src/main.c
     src/selftest.c
     src/debug.c
+    src/lpc.c
     src/tpm/plat/cancel.c
     src/tpm/plat/clock.c
     src/tpm/plat/entropy.c

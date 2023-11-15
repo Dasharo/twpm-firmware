@@ -1,0 +1,1 @@
+add_subdirectory_ifdef(CONFIG_TWPM_LPC_FPGA twpm_lpc)

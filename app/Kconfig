@@ -11,4 +11,14 @@ config TWPM_USE_HWINFO
 	default y
 	depends on HWINFO
 
+config TWPM_LPC_FPGA
+	bool "Use custom FPGA-based LPC peripheral"
+	default y
+	depends on SOC_EOS_S3
+	help
+	  Use custom FPGA interface to communicate with host through LPC. This
+	  is not general-purpose LPC peripheral - some specifics of TPM protocol are
+	  handled by LPC directly.
+
+
 source "Kconfig.zephyr"
