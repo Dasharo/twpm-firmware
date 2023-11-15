@@ -49,6 +49,7 @@
 
 LOG_MODULE_REGISTER(nv);
 
+#ifndef CONFIG_TWPM_NV_EMULATE
 #define FLASH_NODE DT_NODELABEL(flash)
 
 #define NVINTEGRITYMAGIC (0x44494E54) // TNID - TPM NV Integrity Data
@@ -72,14 +73,17 @@ typedef struct {
 
 static const struct flash_area *flash_nv_integrity = NULL;
 static const struct flash_area *flash_nv_storage = NULL;
-static bool nv_ok = false;
-static uint8_t *nv_shadow = NULL;
 static uint8_t *nv_integrity = NULL;
 static size_t nv_erase_block_size;
 static uint8_t nv_erase_polarity;
 static size_t nv_write_block_size;
 static size_t nv_integrity_size;
+#endif
 
+static uint8_t *nv_shadow = NULL;
+static bool nv_ok = false;
+
+#ifndef CONFIG_TWPM_NV_EMULATE
 /**
  * @brief Erase flash device
  * 
@@ -144,6 +148,7 @@ static const struct flash_area *nv_partition_open(int id, const char *label) {
 
 	return area;
 }
+#endif
 
 /**
  * @brief Initializes TPM NV subsystem.
@@ -156,6 +161,7 @@ static const struct flash_area *nv_partition_open(int id, const char *label) {
  */
 int twpm_init_nv(void)
 {
+#ifndef CONFIG_TWPM_NV_EMULATE
 	bool integrity_verify = false;
 	bool first_run = true;
 
@@ -242,6 +248,17 @@ int twpm_init_nv(void)
 	LOG_INF("NV init done");
 	nv_ok = true;
 	return first_run ? 1 : 0;
+#else
+	nv_shadow = k_malloc(CONFIG_TWPM_EMULATED_NV_SIZE);
+	if (!nv_shadow) {
+		LOG_ERR("NV: cannot allocate enough memory");
+		return -1;
+	}
+
+	LOG_WRN("TwPM was built with CONFIG_TWPM_NV_EMULATE. Changes are NOT persistent!");
+	nv_ok = true;
+	return 1;
+#endif
 }
 
 /**
@@ -284,7 +301,11 @@ void _plat__NvMemoryRead(unsigned int offset, unsigned int size, void *data)
 		return;
 	}
 
+#ifndef CONFIG_TWPM_NV_EMULATE
 	if (offset + size > flash_nv_storage->fa_size) {
+#else
+	if (offset + size > CONFIG_TWPM_EMULATED_NV_SIZE) {
+#endif
 		LOG_ERR("Attempt to read NV beyond its bounds");
 		return;
 	}
@@ -324,7 +345,11 @@ void _plat__NvMemoryWrite(unsigned int offset, unsigned int size, void *data)
 		return;
 	}
 
+#ifndef CONFIG_TWPM_NV_EMULATE
 	if (offset + size > flash_nv_storage->fa_size) {
+#else
+	if (offset + size > CONFIG_TWPM_EMULATED_NV_SIZE) {
+#endif
 		LOG_ERR("Attempt to write NV beyond its bounds");
 		return;
 	}
@@ -337,12 +362,20 @@ void _plat__NvMemoryWrite(unsigned int offset, unsigned int size, void *data)
 // value. The value represents the erase state of the memory.
 void _plat__NvMemoryClear(unsigned int offset, unsigned int size)
 {
+#ifndef CONFIG_TWPM_NV_EMULATE
 	if (offset + size > flash_nv_storage->fa_size) {
+#else
+	if (offset + size > CONFIG_TWPM_EMULATED_NV_SIZE) {
+#endif
 		LOG_ERR("Attempt to erase NV beyond its bounds");
 		return;
 	}
 
+#ifndef CONFIG_TWPM_NV_EMULATE
 	memset(&nv_shadow[offset], nv_erase_polarity, size);
+#else
+	memset(&nv_shadow[offset], 0xff, size);
+#endif
 }
 
 //***_plat__NvMemoryMove()
@@ -351,8 +384,13 @@ void _plat__NvMemoryClear(unsigned int offset, unsigned int size)
 //      copied before it is written
 void _plat__NvMemoryMove(unsigned int src, unsigned int dst, unsigned int size)
 {
+#ifndef CONFIG_TWPM_NV_EMULATE
 	if (src + size > flash_nv_storage->fa_size
 	    || dst + size > flash_nv_storage->fa_size) {
+#else
+	if (src + size > CONFIG_TWPM_EMULATED_NV_SIZE
+	    || dst + size > CONFIG_TWPM_EMULATED_NV_SIZE) {
+#endif
 		LOG_ERR("Attempt move data past NV bounds");
 		return;
 	}
@@ -376,6 +414,7 @@ int _plat__NvCommit(void)
 
 	LOG_INF("NV commit");
 
+#ifndef CONFIG_TWPM_NV_EMULATE
 	// TODO: should write only blocks that had changed to reduce hardware
 	// wear out. Also, write must be atomic and fault tolerant to avoid NV
 	// corruption due to power loss; in the simplest scenario we could use 2
@@ -414,6 +453,9 @@ int _plat__NvCommit(void)
 		LOG_ERR("NV: commit failed (integrity): %d", ret);
 		return -1;
 	}
+#else
+	(void)ret;
+#endif
 
 	return 0;
 }

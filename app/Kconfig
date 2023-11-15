@@ -3,12 +3,24 @@ mainmenu "TwPM firmware configuration"
 config TWPM_USE_UNSAFE_RNG
 	bool "Usafe unsafe RNG"
 	help
-	  DANGER! Disables use of cryptographically-secure Randor Number
+	  DANGER! Disables use of cryptographically-secure Random Number
 	  Generator. This should be used only for testing purposes.
 
 config TWPM_USE_HWINFO
 	bool "Use hwinfo to generate TPM unique"
 	default y
 	depends on HWINFO
+
+config TWPM_NV_EMULATE
+	bool "Emulate NV using volatile memory"
+	default n
+	help
+	  When enabled TPM has no persistent memory and all changes will be lost
+	  after reset. Used mainly for testing and early platform bringup.
+
+config TWPM_EMULATED_NV_SIZE
+	int "Size of emulated NV in bytes"
+	default 16384
+	depends on TWPM_NV_EMULATE
 
 source "Kconfig.zephyr"
