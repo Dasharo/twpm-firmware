@@ -9,8 +9,8 @@ manifest:
     - name: upstream
       url-base: https://github.com/zephyrproject-rtos
 
-    - name: lpn
-      url-base: https://github.com/lpn-plant
+    - name: dasharo
+      url-base: https://github.com/Dasharo
 
     - name: wolfssl
       url-base: https://github.com/wolfssl
@@ -53,9 +53,9 @@ manifest:
         - hal
 
     - name: ms-tpm-20-ref
-      revision: 4c940fdf67cb319e87b3709a3bda35d8d416dfb1
+      revision: 5878ec1e26bace3960d62468f4740d1c08394f1c
       path: modules/ms-tpm-20-ref
-      remote: lpn
+      remote: dasharo
 
     - name: wolfssl
       path: modules/crypto/wolfssl
