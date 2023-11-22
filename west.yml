@@ -17,7 +17,8 @@ manifest:
 
   projects:
     - name: zephyr
-      revision: zephyr-v3.4.0
+      revision: 71194e41ac04d74a60d541257d98c20bb6e6bf6d
+      remote: dasharo
       path: zephyr
       west-commands: scripts/west-commands.yml
 
