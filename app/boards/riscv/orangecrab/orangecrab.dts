@@ -18,6 +18,17 @@
 			reg = <0x80000000 DT_SIZE_M(128)>;
 		};
 	};
+
+	twpm: syscon@F0000000 {
+		compatible = "syscon";
+		status = "okay";
+		reg = <0xF0000000 0x800>;
+	};
+
+	twpmram: memory@F0000800 {
+		compatible = "mmio-sram";
+		reg = < 0xF0000800 0x800 >;
+	};
 };
 
 &cpu0 {

@@ -37,6 +37,12 @@
 #include "PlatformData.h"
 #include "Platform_fp.h"
 
+#include <zephyr/drivers/syscon.h>
+
+#include <twpm/tpm.h>
+
+unsigned char _g_locality = 0;
+
 //** Functions
 
 //***_plat__LocalityGet()
@@ -45,5 +51,5 @@
 // The locality can be 0-4 or 32-255. 5-31 is not allowed.
 unsigned char _plat__LocalityGet(void)
 {
-	return 0;
+	return _g_locality;
 }
