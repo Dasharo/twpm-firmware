@@ -77,7 +77,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_NV_GlobalWriteLock, "TPM_CC_NV_GlobalWriteLock"},
 #endif
 #if CC_GetCommandAuditDigest == YES
-    {TPM_CC_GetCommandAuditDigest, ""},
+    {TPM_CC_GetCommandAuditDigest, "TPM_CC_GetCommandAuditDigest"},
 #endif
 #if CC_NV_Increment == YES
     {TPM_CC_NV_Increment, "TPM_CC_NV_Increment"},
@@ -122,7 +122,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_FieldUpgradeData, "TPM_CC_FieldUpgradeData"},
 #endif
 #if CC_IncrementalSelfTest == YES
-    {TPM_CC_IncrementalSelfTest, "TPM_CC_FieldUpgradeData"},
+    {TPM_CC_IncrementalSelfTest, "TPM_CC_IncrementalSelfTest"},
 #endif
 #if CC_SelfTest == YES
     {TPM_CC_SelfTest, "TPM_CC_SelfTest"},
@@ -134,7 +134,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_Shutdown, "TPM_CC_Shutdown"},
 #endif
 #if CC_StirRandom == YES
-    {TPM_CC_StirRandom, ""},
+    {TPM_CC_StirRandom, "TPM_CC_StirRandom"},
 #endif
 #if CC_ActivateCredential == YES
     {TPM_CC_ActivateCredential, "TPM_CC_ActivateCredential"},
@@ -182,7 +182,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_HMAC, "TPM_CC_HMAC"},
 #endif
 #if CC_MAC == YES
-    {TPM_CC_MAC, "TPM_CC_HMAC"},
+    {TPM_CC_MAC, "TPM_CC_MAC"},
 #endif
 #if CC_Import == YES
     {TPM_CC_Import, "TPM_CC_Import"},
@@ -200,7 +200,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_HMAC_Start, "TPM_CC_HMAC_Start"},
 #endif
 #if CC_MAC_Start == YES
-    {TPM_CC_MAC_Start, "TPM_CC_HMAC_Start"},
+    {TPM_CC_MAC_Start, "TPM_CC_MAC_Start"},
 #endif
 #if CC_SequenceUpdate == YES
     {TPM_CC_SequenceUpdate, "TPM_CC_SequenceUpdate"},
@@ -209,7 +209,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_Sign, "TPM_CC_Sign"},
 #endif
 #if CC_Unseal == YES
-    {TPM_CC_Unseal, "TPM_CC_Sign"},
+    {TPM_CC_Unseal, "TPM_CC_Unseal"},
 #endif
 #if CC_PolicySigned == YES
     {TPM_CC_PolicySigned, "TPM_CC_PolicySigned"},
@@ -230,7 +230,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_FlushContext, "TPM_CC_FlushContext"},
 #endif
 #if CC_LoadExternal == YES
-    {TPM_CC_LoadExternal, ""},
+    {TPM_CC_LoadExternal, "TPM_CC_LoadExternal"},
 #endif
 #if CC_MakeCredential == YES
     {TPM_CC_MakeCredential, "TPM_CC_MakeCredential"},
@@ -251,7 +251,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_PolicyCounterTimer, "TPM_CC_PolicyCounterTimer"},
 #endif
 #if CC_PolicyCpHash == YES
-    {TPM_CC_PolicyCpHash, "TPM_CC_PolicyCounterTimer"},
+    {TPM_CC_PolicyCpHash, "TPM_CC_PolicyCpHash"},
 #endif
 #if CC_PolicyLocality == YES
     {TPM_CC_PolicyLocality, "TPM_CC_PolicyLocality"},
@@ -278,7 +278,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_VerifySignature, "TPM_CC_VerifySignature"},
 #endif
 #if CC_ECC_Parameters == YES
-    {TPM_CC_ECC_Parameters, "TPM_CC_VerifySignature"},
+    {TPM_CC_ECC_Parameters, "TPM_CC_ECC_Parameters"},
 #endif
 #if CC_FirmwareRead == YES
     {TPM_CC_FirmwareRead, "TPM_CC_FirmwareRead"},
@@ -296,7 +296,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_Hash, "TPM_CC_Hash"},
 #endif
 #if CC_PCR_Read == YES
-    {TPM_CC_PCR_Read, "TPM_CC_Hash"},
+    {TPM_CC_PCR_Read, "TPM_CC_PCR_Read"},
 #endif
 #if CC_PolicyPCR == YES
     {TPM_CC_PolicyPCR, "TPM_CC_PolicyPCR"},
@@ -320,10 +320,10 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_EventSequenceComplete, "TPM_CC_EventSequenceComplete"},
 #endif
 #if CC_HashSequenceStart == YES
-    {TPM_CC_HashSequenceStart, "TPM_CC_EventSequenceComplete"},
+    {TPM_CC_HashSequenceStart, "TPM_CC_HashSequenceStart"},
 #endif
 #if CC_PolicyPhysicalPresence == YES
-    {TPM_CC_PolicyPhysicalPresence, ""},
+    {TPM_CC_PolicyPhysicalPresence, "TPM_CC_PolicyPhysicalPresence"},
 #endif
 #if CC_PolicyDuplicationSelect == YES
     {TPM_CC_PolicyDuplicationSelect, "TPM_CC_PolicyDuplicationSelect"},
@@ -353,7 +353,7 @@ const lookup_t tpm_cc_table[] =
     {TPM_CC_PolicyTemplate, "TPM_CC_PolicyTemplate"},
 #endif
 #if CC_CreateLoaded == YES
-    {TPM_CC_CreateLoaded, ""},
+    {TPM_CC_CreateLoaded, "TPM_CC_CreateLoaded"},
 #endif
 #if CC_PolicyAuthorizeNV == YES
     {TPM_CC_PolicyAuthorizeNV, "TPM_CC_PolicyAuthorizeNV"},
@@ -418,7 +418,6 @@ const lookup_t tpm_rc_formatZeroCodes[] = {
 };
 
 const lookup_t tpm_rc_warningCodes[] = {
-    {TPM_RC_CONTEXT_GAP, "TPM_RC_CONTEXT_GAP"},
     {TPM_RC_CONTEXT_GAP, "TPM_RC_CONTEXT_GAP"},
     {TPM_RC_OBJECT_MEMORY, "TPM_RC_OBJECT_MEMORY"},
     {TPM_RC_SESSION_MEMORY, "TPM_RC_SESSION_MEMORY"},
