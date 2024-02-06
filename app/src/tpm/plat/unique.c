@@ -36,6 +36,7 @@
 #include "TpmBuildSwitches.h"
 #include "zephyr/kernel.h"
 #include "zephyr/sys/util.h"
+#include <string.h>
 #include <twpm/platform.h>
 
 #include <zephyr/kernel.h>
@@ -54,7 +55,7 @@ LOG_MODULE_REGISTER(unique);
 
 #if defined (CONFIG_TWPM_USE_PUF)
 #define TWPM_PUF_N_WORDS 3 // 96 bits of unique data
-#define TWPM_PUF_N_SAMPLES 128 // probably not enough, default was 4096, reduced to improve performance
+#define TWPM_PUF_N_SAMPLES 16384
 #define TWPM_PUF_HYST_HI (TWPM_PUF_N_SAMPLES - (TWPM_PUF_N_SAMPLES / 32)) // min number of times bit x in all samples has to be set to be identified as '1'
 #define TWPM_PUF_HYST_LO (TWPM_PUF_N_SAMPLES / 32) // max number of times bit x in all samples has to be clear to be identified as '0'
 
@@ -76,14 +77,13 @@ void puf_sample(const struct device *dev, uint32_t *out) {
 			continue;
 		}
 
-		syscon_write_reg(dev, TWPM_PUF_CTRL, 0);
 		for (int j = 0; j < TWPM_PUF_N_WORDS; j++)
 			syscon_read_reg(dev, TWPM_PUF_ID(j), &out[j]);
 
 		break;
 	}
 
-	
+	syscon_write_reg(dev, TWPM_PUF_CTRL, 0);
 }
 
 void get_puf_id(const struct device *dev, uint32_t *puf_data) {
@@ -94,13 +94,10 @@ void get_puf_id(const struct device *dev, uint32_t *puf_data) {
 	uint32_t res[3];
 	uint32_t val[3];
 
-	for (x = 0; x < 96; x++) {
-		cnt[x] = 0;
-	}
+	memset(cnt, 0, sizeof cnt);
 
 	// count how often each bit of the 96-bit ID across all samples
 	for (x = 0; x < TWPM_PUF_N_SAMPLES; x++) {
-		LOG_DBG("PUF sampling ... (%d out of %d)", x, TWPM_PUF_N_SAMPLES);
 		// get 96-bit raw ID sample
 		puf_sample(dev, puf_raw);
 
@@ -153,27 +150,9 @@ void get_puf_id(const struct device *dev, uint32_t *puf_data) {
 	puf_data[0] = res[0] & val[0];
 	puf_data[1] = res[1] & val[1];
 	puf_data[2] = res[2] & val[2];
-}
 
-K_THREAD_STACK_DEFINE(puf_thread_stack, 16384);
-struct k_thread puf_thread;
-k_tid_t puf_thread_id;
-
-static void puf_main(void *p0, void *p1, void *p2) {
-	const size_t size = TWPM_PUF_N_WORDS * 4;
-	const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(twpmpuf));
-
-	union {
-		uint8_t u8[TWPM_PUF_N_WORDS * 4];
-		uint32_t u32[TWPM_PUF_N_WORDS];
-	} id;
-
-	LOG_DBG("sampling PUF ...");
-	// This is going to take a long time ... flush pending messages
-	while (log_process()) {}
-	get_puf_id(dev, id.u32);
-	for (int i = 0; i < ARRAY_SIZE(id.u32); i++)
-		LOG_DBG("PUF ID[%d]: 0x%08x", i, id.u32[i]);
+	for (int i = 0; i < 3; i++)
+		LOG_DBG("res[%d] = 0x%08x val[%d] = 0x%08x", i, res[i], i, val[i]);
 }
 #endif
 
@@ -198,20 +177,25 @@ void twpm_init_unique() {
 		LOG_ERR("Could not obtain hardware device ID: %d\n", size);
 		return;
 	}
+#elif defined(CONFIG_TWPM_USE_PUF)
+	const size_t size = TWPM_PUF_N_WORDS * 4;
+	const struct device *dev = DEVICE_DT_GET(DT_NODELABEL(twpmpuf));
+
+	union {
+		uint8_t u8[TWPM_PUF_N_WORDS * 4];
+		uint32_t u32[TWPM_PUF_N_WORDS];
+	} id;
+
+	get_puf_id(dev, id.u32);
+
+	for (int i = 0; i < ARRAY_SIZE(id.u32); i++)
+		LOG_DBG("PUF ID[%d]: 0x%08x", i, id.u32[i]);
+#endif
 
 	wc_Sha512 hasher;
 	wc_InitSha512(&hasher);
 	wc_Sha512Update(&hasher, id.u8, size);
 	wc_Sha512Final(&hasher, tpm_unique);
-#elif defined(CONFIG_TWPM_USE_PUF)
-	// Spawn in separate thread, doing it here causes zephyr to hang.
-	// When spawned in separate thread computing ID using 128 samples takes
-	// about 10 minutes.
-	k_thread_create(
-		&puf_thread, puf_thread_stack,
-		K_THREAD_STACK_SIZEOF(puf_thread_stack),
-		puf_main, NULL, NULL, NULL, 7, 0, K_NO_WAIT);
-#endif
 }
 
 /**
