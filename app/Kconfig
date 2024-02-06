@@ -11,6 +11,16 @@ config TWPM_USE_HWINFO
 	default y
 	depends on HWINFO
 
+config TWPM_USE_PUF
+	bool "Use PUF to generate TPM unique"
+	default n
+
+config TWPM_PUF_SELFTEST
+	bool "Self-test PUF"
+	default n
+	help
+	  Used for to test PUF stability (for debugging purposes only).
+
 config TWPM_NV_EMULATE
 	bool "Emulate NV using volatile memory"
 	default n

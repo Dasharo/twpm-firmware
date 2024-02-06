@@ -29,6 +29,12 @@
 		compatible = "mmio-sram";
 		reg = < 0xF0000800 0x800 >;
 	};
+
+	twpmpuf: syscon@F0001800 {
+		compatible = "syscon";
+		status = "okay";
+		reg = <0xF0001800 0x800>;
+	};
 };
 
 &cpu0 {
