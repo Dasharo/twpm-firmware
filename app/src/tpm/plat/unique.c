@@ -68,9 +68,7 @@ void twpm_init_unique() {
 	wc_InitSha512(&hasher);
 	wc_Sha512Update(&hasher, id, size);
 	wc_Sha512Final(&hasher, tpm_unique);
-#endif
-
-#if defined(CONFIG_TWPM_CONST_UNIQUE)
+#elif defined(CONFIG_TWPM_CONST_UNIQUE)
 	LOG_WRN("TwPM was built with CONFIG_TWPM_CONST_UNIQUE, the implementation is not secure!");
 
 #define TO_STRING(x) #x
@@ -80,7 +78,10 @@ void twpm_init_unique() {
 	wc_InitSha512(&hasher);
 	wc_Sha512Update(&hasher, string, strlen(string));
 	wc_Sha512Final(&hasher, tpm_unique);
+#else
+#error "Must select a method to obtain unique value"
 #endif
+
 }
 
 /**
