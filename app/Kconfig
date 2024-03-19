@@ -9,7 +9,21 @@ config TWPM_USE_UNSAFE_RNG
 config TWPM_USE_HWINFO
 	bool "Use hwinfo to generate TPM unique"
 	default y
-	depends on HWINFO
+	depends on HWINFO && !TWPM_CONST_UNIQUE
+
+config TWPM_CONST_UNIQUE
+	bool "Set constant unique value"
+	help
+	  DANGER! This is intended mostly for testing or for platform bringup.
+	  Setting this option causes TPM unique value to be embedded into binary and
+	  being the same for all devices. As unique value is used as cryptographic
+	  seed, enabling this option causes TwPM implementation to become insecure
+	  as obtaining firmware binary equals to obtaining encryption key.
+
+config TWPM_CONST_UNIQUE_VALUE
+	string "Set value for TPM unique"
+	depends on TWPM_CONST_UNIQUE
+	default "0aeb4b9444f0cf74f1d2d13f49d7cf16ae592eccfb1b1d9cf64007271d49c955d24ded8f7dd3285f501c18d01c79d5c869bd9e02de9c323c42c44eac"
 
 config TWPM_NV_EMULATE
 	bool "Emulate NV using volatile memory"

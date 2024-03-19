@@ -10,6 +10,7 @@
 		zephyr,console = &uart0;
 		zephyr,shell-uart = &uart0;
 		zephyr,uart-pipe = &uart0;
+		zephyr,flash = &w25q;
 	};
 
 	soc {
@@ -37,5 +38,17 @@
 
 &uart0 {
 	current-speed = <115200>;
+	status = "okay";
+};
+
+&spi0 {
+	w25q: w25q128jvp@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(133)>;
+		size = <0x8000000>;
+		jedec-id = [ef 40 18];
+		status = "okay";
+	};
 	status = "okay";
 };
