@@ -1,6 +1,6 @@
 /dts-v1/;
 
-#include <neorv32_1_9_0.dtsi>
+#include <neorv32.dtsi>
 #include <freq.h>
 #include <mem.h>
 
@@ -37,5 +37,9 @@
 
 &uart0 {
 	current-speed = <115200>;
+	status = "okay";
+};
+
+&trng {
 	status = "okay";
 };

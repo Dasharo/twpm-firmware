@@ -22,6 +22,7 @@ target_sources(app PRIVATE
     src/tpm/plat/run_command.c
     src/tpm/plat/unique.c
     src/tpm/init.c
+    src/rng.c
 )
 target_include_directories(app PRIVATE include)
 target_link_libraries(app PRIVATE ms-tpm-20-ref)
