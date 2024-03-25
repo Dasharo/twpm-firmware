@@ -39,3 +39,7 @@
 	current-speed = <115200>;
 	status = "okay";
 };
+
+&trng {
+	status = "okay";
+};
