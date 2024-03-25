@@ -26,6 +26,11 @@ struct k_thread tpm_thread;
 k_tid_t tpm_thread_id;
 K_SEM_DEFINE(tpm_cmd_sem, 0, 1);
 
+#ifdef CONFIG_TWPM_RNG_TEST
+K_THREAD_STACK_DEFINE(rng_thread_stack, 512);
+struct k_thread rng_thread;
+#endif
+
 static uint8_t tpm_cmd[2048];
 static uint32_t tpm_cmd_size = 0;
 
@@ -99,9 +104,13 @@ static void twpm_isr(const struct device *const dev)
 	}
 }
 
+#ifdef CONFIG_TWPM_RNG_TEST
+extern void twpm_test_rng();
+#endif
+
 int main(void)
 {
-	LOG_INF("Starting TwPM on %s", CONFIG_BOARD);
+	LOG_INF("Starting TwPM");
 
 	IRQ_CONNECT(TWPM_IRQ, 0, twpm_isr, DEVICE_DT_GET(DT_NODELABEL(twpm)), 0);
 	irq_enable(TWPM_IRQ);
@@ -113,6 +122,12 @@ int main(void)
 					K_THREAD_STACK_SIZEOF(tpm_thread_stack),
 					tpm_thread_entry, NULL, NULL, NULL, 5, 0,
 					K_NO_WAIT);
+
+#ifdef CONFIG_TWPM_RNG_TEST
+	k_thread_create(&rng_thread, rng_thread_stack,
+			K_THREAD_STACK_SIZEOF(rng_thread_stack), twpm_test_rng,
+			NULL, NULL, NULL, 5, 0, K_NO_WAIT);
+#endif
 
 	return 0;
 }

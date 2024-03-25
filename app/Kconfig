@@ -23,4 +23,8 @@ config TWPM_EMULATED_NV_SIZE
 	default 16384
 	depends on TWPM_NV_EMULATE
 
+config TWPM_RNG_TEST
+	bool "Enable RNG (Random Number Generator) test"
+	default false
+
 source "Kconfig.zephyr"

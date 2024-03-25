@@ -5,5 +5,24 @@ CONFIG_BOARD_ORANGECRAB=y
 CONFIG_SERIAL=y
 CONFIG_CONSOLE=y
 CONFIG_UART_CONSOLE=y
-CONFIG_UART_INTERRUPT_DRIVEN=y
 CONFIG_XIP=n
+
+# Workaround for misbehaving UART and mtimer drivers.
+# Force sync for both printk and log, we have some problems with task scheduling
+# (see mtimer problem described below) which cause messages to be delayed for
+# too long and then dropped due to buffer overflow.
+CONFIG_PRINTK_SYNC=y
+CONFIG_LOG_MODE_MINIMAL=y
+# Broken, TX randomly hangs.
+CONFIG_UART_INTERRUPT_DRIVEN=n
+
+# FIXME: Seems like there is something wrong with mtimer driver. Zephyr should
+# translate hardware clock cycles into to ticks which is Zephyr's representation
+# of time, but something bad happens causing Zephyr to hang for indefinitely
+# long when sleeping even for 1 ms. As workaround set SYS_CLOCK_TICKS_PER_SEC
+# to equal SYS_CLOCK_HW_CYCLES_PER_SEC. This allows Zephyr to proceed.
+#
+# Note: SYS_CLOCK_HW_CYCLES_PER_SEC is set from DTS
+# See SYS_CLOCK_HW_CYCLES_PER_SEC and CONFIG_SYS_CLOCK_TICKS_PER_SEC help for
+# details.
+CONFIG_SYS_CLOCK_TICKS_PER_SEC=50000000
